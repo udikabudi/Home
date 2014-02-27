@@ -9,4 +9,19 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-Homescoring::Application.config.secret_key_base = 'a705933ef54bdf6124dd0817a8261f2aa29b9a21d2bd46998cc968aadebcf95c6fac4fe334d77e75b983ce934fc89ae7c4977c6477966d43e7e2a9116a42bbb9'
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+Homescoring::Application.config.secret_key_base = secure_token
